@@ -3,6 +3,7 @@ Vagrant.configure("2") do |config|
         config.vm.box = "centos/7"
         config.vm.network "public_network"
         config.vm.network "forwarded_port", guest: 2376, host: 5557
+        config.vm.hostname = "node1"
     end
 
 #    config.vm.define "node2" do |node2|

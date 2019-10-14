@@ -15,8 +15,8 @@
     src: override.conf
     dest: /etc/systemd/system/docker.service.d/override.conf
 
-- name: Restart docker
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: docker
+# - name: Restart docker
+#   systemd:
+#     state: restarted
+#     daemon_reload: yes
+#     name: docker

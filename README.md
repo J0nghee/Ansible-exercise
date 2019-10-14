@@ -36,3 +36,13 @@ Expose docker api:
 4. Restart docker:
 
         systemctl restart docker.service
+
+https://docs.docker.com/engine/security/https/
+
+vagrant scp node1:/home/vagrant/key.pem .
+
+https://gist.github.com/kekru/4e6d49b4290a4eebc7b597c07eaf61f2
+
+docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem \
+  -H=$HOST:2376 version
+
