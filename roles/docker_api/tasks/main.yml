@@ -1,16 +1,22 @@
 ---
--name: create container
- docker_container:
-   name: 
-# tasks file for docker_api
-#- name: create directory
- # file:
- #   path: /etc/systemd/system/docker.service.d
- #   state: directory
 
-#- name: Expose Api 
-#  command: "{{ item }}"
-#  with_items:
-#    - printf "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2376 -H unix://var/run/docker.sock" | tee /etc/systemd/system/docker.service.d/expose.conf
-#    - systemctl daemon-reload
-#    - systemctl restart docker
+- name: copy daemon.json
+  template: 
+    src: daemon.json
+    dest: /etc/docker
+
+- name: create folder for override.conf
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: copy override.conf
+  template:
+    src: override.conf
+    dest: /etc/systemd/system/docker.service.d/override.conf
+
+- name: Restart docker
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker
