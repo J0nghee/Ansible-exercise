@@ -1,49 +1,100 @@
 ---
-# main.yml
+# tasks file for tls_api
+- name: primi 3
+  command: "{{ item }}"
+  with_items:
+      - openssl genrsa -aes256 -passout pass:{{CA_keys_pass}} -out ca-key.pem 4096
+      - openssl req -passin pass:{{CA_keys_pass}} -new -x509 -days {{CA_expiration_days}} -key ca-key.pem -sha256 -out ca.pem -subj {{CA_details}}
+      - openssl genrsa -out server-key.pem 4096
+      - openssl req -subj "/CN={{daemon_hostname}}" -new -key server-key.pem -out server.csr
+  args:
+    creates: key.pem
 
-- name: Create a tempdir
-  file:
-    state: directory
-    path: "{{ dds_temp_path }}"   
+- name: touch extfile.cnf
+  command: touch extfile.cnf
+  args:
+    creates: extfile.cnf
 
-- name: Remove passphrase file, if it exists
-  file:
-    state: absent
-    path: "{{ dds_passphrase_file }}" 
-
-- name: Create passphrase file
-  file:
-    state: touch
-    path: "{{ dds_passphrase_file }}" 
-
-- name: Add passphrase to the file
+- name: write extfile.cnf
   lineinfile:
-    dest: "{{ dds_passphrase_file }}"
-    line: "{{ dds_passphrase }}" 
+    dest: extfile.cnf
+    line: subjectAltName = DNS:{{daemon_hostname}},IP:{{daemon_host_ip}}
+  
+- name: last command
+  command: openssl x509 -passin pass:{{CA_keys_pass}} -req -days {{CA_expiration_days}} -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+  args:
+    creates: server-cert.pem
 
-- name: Generate ca-key.pem
-  command: "openssl genrsa -aes256 -passout file:{{ dds_passphrase_file }} -out {{ dds_temp_path }}/ca-key.pem 4096"
+- name: client keys
+  command: "{{ item }}"
+  with_items:
+    - openssl genrsa -out key.pem 4096
+    - openssl req -subj '/CN=client' -new -key key.pem -out client.csr
+  args:
+    creates: client.csr
 
-- name: Generate ca certificate   
-  command: "openssl req -new -x509 -days 365 -key {{ dds_temp_path }}/ca-key.pem -sha256 -out {{ dds_temp_path }}/ca.pem -passin file:{{ dds_passphrase_file }} -subj '/C={{ dds_country }}/ST={{dds_state }}>/L={{ dds_locality }}/O={{ dds_organization }}/CN={{ dds_common_name }}'"
+- name: touch extfile-client.cnf
+  command: touch extfile-client.cnf
+  args:
+    creates: extfile-client.cnf
 
-- include: generate_server_certs.yml
-- include: generate_client_certs.yml
+- name: write extfile-client.cnf
+  lineinfile:
+    dest: extfile-client.cnf
+    line: extendedKeyUsage = clientAuth
 
-- name: Remove the temp directory
+- name: generate signed certificate
+  command: openssl x509 -passin pass:{{CA_keys_pass}} -req -days {{CA_expiration_days}} -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+  args:
+    creates: cert.pem
+
+- name: chmod keys
+  with_items:
+      - ca-key.pem 
+      - key.pem 
+      - server-key.pem  
   file:
-    state: absent
-    path: "{{ dds_temp_path }}"
+    path: "{{ item }}"
+    mode: 0400
 
-- name: Install shell script for setting DOCKER env vars
-  template:
-    src: "{{ role_path }}/templates/docker_env.j2"
-    dest: "{{ dds_env_shell_path }}/docker_env.sh"
-    mode: 0755
-  when: dds_install_shell
+- name: chmod server-cert
+  with_items:
+    - ca.pem 
+    - server-cert.pem 
+    - cert.pem
+  file:
+    path: "{{ item }}"
+    mode: 0444
 
-- name: Restart the docker daemon 
-  service:
+
+- name: fetch client's files
+  with_items:
+    - ca.pem
+    - cert.pem
+    - key.pem
+  fetch:
+    src: "{{ item }}"
+    dest: .
+
+- name: Start Docker service
+  systemd:
     name: docker
-    state: restarted  
-  when: dds_restart_docker
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  
+  
+
+  # - openssl req -subj "/CN={{daemon_host}}" -sha256 -new -key server-key.pem -out server.csr
+  # - echo subjectAltName = DNS:"{{daemon_host}}"",IP:"{{local_ip}}",IP:127.0.0.1 >> extfile.cnf
+  # - echo extendedKeyUsage = serverAuth >> extfile.cnf
+  # - openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+  # - openssl genrsa -out key.pem 4096
+  # - openssl req -subj '/CN=client' -new -key key.pem -out client.csr
+  # - echo extendedKeyUsage = clientAuth > extfile-client.cnf
+  # - openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+  # - rm -v client.csr server.csr extfile.cnf extfile-client.cnf
+  # - chmod -v 0400 ca-key.pem key.pem server-key.pem
+  # - chmod -v 0444 ca.pem server-cert.pem cert.pem
+  # - dockerd --tlsverify --tlscacert=ca.pem --tlscert=server-cert.pem --tlskey=server-key.pem -H=0.0.0.0:2376
+  # - 

@@ -46,3 +46,4 @@ https://gist.github.com/kekru/4e6d49b4290a4eebc7b597c07eaf61f2
 docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem \
   -H=$HOST:2376 version
 
+It works, but expose the same port as the guest, not the one specified in the Vagrantfile. 

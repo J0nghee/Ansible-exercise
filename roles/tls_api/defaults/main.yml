@@ -1,14 +1,9 @@
 ---
-dds_system_tmp: /tmp
-dds_country: US
-dds_state: North Carolina
-dds_locality: Durham
-dds_organization: Acme Corp
-dds_host: 127.0.0.1
-dds_common_name: "{{ dds_host }}" 
-dds_passphrase: Phrase123!
-dds_server_cert_path: /home/vagrant
-dds_client_cert_path: ~/.docker
-dds_env_shell_path: "~"  
-dds_install_shell: yes
-dds_restart_docker: yes
+# defaults file for tls_api
+daemon_hostname: node1
+daemon_host_ip: 10.33.60.108
+CA_keys_pass: changeme
+CA_expiration_days: 365
+CA_details: "/C=GB/ST=London/L=London/O=ExampleCompany/OU=IT/CN=example.com/emailAddress=test@example.com"
+
+
