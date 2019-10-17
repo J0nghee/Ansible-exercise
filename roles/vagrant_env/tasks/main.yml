@@ -1,27 +1,35 @@
 ---
 # tasks file for vagrant_env
 
-- name: Install yum utils
-  yum:
-    name: yum-utils
-    state: latest
 
-- name: Install device-mapper-persistent-data
+- name: Install pre-requisite docker package
   yum:
-    name: device-mapper-persistent-data
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - device-mapper-persistent-data
+    - lvm2
+    - yum-utils
+    
 
-- name: Install lvm2
+# - name: upgrade all packages
+#   yum: name=* state=latest
+
+- name: Add repository for pip
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+- name: install pip
   yum:
-    name: lvm2
+    name: python-pip
     state: latest
+    disable_gpg_check: yes
 
-# - name: Add Docker repo
-#   yum_repository:
-#     name: docker
-#     description: Docker-ce YUM repo
-#     baseurl: https://download.docker.com/linux/centos/docker-ce.repo
-#   become: yes
+- pip:
+    name: docker
+
 
 - name: Add Docker repo
   get_url:

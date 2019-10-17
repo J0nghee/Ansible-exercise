@@ -43,6 +43,8 @@ vagrant scp node1:/home/vagrant/key.pem .
 
 https://gist.github.com/kekru/4e6d49b4290a4eebc7b597c07eaf61f2
 
+After the VMs provisioning we will have certs inside a a folder on our machine with the same name as the vm hostname (node1)
+
 docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem \
   -H=$HOST:2376 version
 

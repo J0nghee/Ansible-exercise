@@ -2,14 +2,15 @@ Vagrant.configure("2") do |config|
     config.vm.define "node1" do |node1|
         config.vm.box = "centos/7"
         config.vm.network "public_network"
-        config.vm.network "forwarded_port", guest: 2376, host: 5557
+        config.vm.network "forwarded_port", guest: 2376, host: 3000
         config.vm.hostname = "node1"
     end
 
 #    config.vm.define "node2" do |node2|
 #        config.vm.box = "centos/7"
 #        config.vm.network "public_network"
-#        config.vm.network "forwarded_port", guest: 2376, host: 5556
+#        config.vm.network "forwarded_port", guest: 2376, host: 3001
+#        config.vm.hostname = "node1"
 #    end
 
   ####### Provision #######

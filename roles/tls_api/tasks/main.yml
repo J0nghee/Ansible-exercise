@@ -10,15 +10,10 @@
   args:
     creates: key.pem
 
-- name: touch extfile.cnf
-  command: touch extfile.cnf
-  args:
-    creates: extfile.cnf
-
-- name: write extfile.cnf
-  lineinfile:
-    dest: extfile.cnf
-    line: subjectAltName = DNS:{{daemon_hostname}},IP:{{daemon_host_ip}}
+- name: copy extfile.conf
+  template:
+    src: extfile.cnf
+    dest: /home/vagrant/extfile.cnf
   
 - name: last command
   command: openssl x509 -passin pass:{{CA_keys_pass}} -req -days {{CA_expiration_days}} -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
@@ -33,15 +28,11 @@
   args:
     creates: client.csr
 
-- name: touch extfile-client.cnf
-  command: touch extfile-client.cnf
-  args:
-    creates: extfile-client.cnf
-
-- name: write extfile-client.cnf
-  lineinfile:
-    dest: extfile-client.cnf
-    line: extendedKeyUsage = clientAuth
+- name: Copy file with owner and permissions
+  copy:
+    src: extfile-client.cnf
+    dest: /home/vagrant/extfile-client.cnf
+    
 
 - name: generate signed certificate
   command: openssl x509 -passin pass:{{CA_keys_pass}} -req -days {{CA_expiration_days}} -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf

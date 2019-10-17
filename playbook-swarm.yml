@@ -1,0 +1,6 @@
+---
+- name: deploy docker swarm
+  hosts: manager
+  become: true
+  roles:
+    - role: docker_swarm
