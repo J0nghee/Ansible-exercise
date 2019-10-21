@@ -1,0 +1,25 @@
+---
+# tasks file for docker_swarm_worker
+- name: Get info on Docker Swarm
+  docker_swarm_info:
+  register: result
+  delegate_to: "{{ docker_master_host }}"
+  run_once: true
+
+- set_fact:
+    master_ip: "{{ ansible_eth1.ipv4.address }}"
+  delegate_to: node1
+  run_once: true
+
+
+- debug:
+    var: worker_token, master_ip,
+
+- name: Add nodes
+  docker_swarm:
+    state: join
+    advertise_addr: "{{ ansible_eth1.ipv4.address }}"
+    join_token: "{{ result.swarm_facts.JoinTokens.Worker }}"
+    remote_addrs: "{{ master_ip }}:2377"
+  when: role == 'worker'
+

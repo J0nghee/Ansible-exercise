@@ -1,6 +1,0 @@
----
-- debug: var=ansible_all_ipv4_addresses[2]
-- name: Init a new docker swarm
-  docker_swarm:
-    state: present
-    advertise_addr: 10.33.60.111

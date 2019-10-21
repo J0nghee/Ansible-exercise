@@ -1,0 +1,16 @@
+---
+- debug: 
+    msg: "{{ ansible_eth1.ipv4.address }}"
+  when: role == 'master'
+    
+- name: Init a new docker swarm
+  docker_swarm:
+    state: present
+    advertise_addr: "{{ ansible_eth1.ipv4.address }}"
+  when: role == 'master'
+
+- name: Get info on Docker Swarm
+  docker_swarm_info:
+  ignore_errors: yes
+  register: result
+  when: role == 'master'

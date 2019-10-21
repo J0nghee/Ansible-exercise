@@ -1,6 +1,8 @@
 ---
 - name: deploy docker swarm
-  hosts: manager
+  hosts: nodes
   become: true
+  gather_facts: True
   roles:
-    - role: docker_swarm
+    - role: docker_swarm_init
+    - role: docker_swarm_worker 

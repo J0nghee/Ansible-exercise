@@ -4,13 +4,8 @@
 
 - name: Install pre-requisite docker package
   yum:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - device-mapper-persistent-data
-    - lvm2
-    - yum-utils
-    
+    name: ['device-mapper-persistent-data', 'lvm2', 'yum-utils']
+    state: latest  
 
 # - name: upgrade all packages
 #   yum: name=* state=latest

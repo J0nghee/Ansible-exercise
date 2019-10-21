@@ -49,3 +49,7 @@ docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem --tlskey=key.pem \
   -H=$HOST:2376 version
 
 It works, but expose the same port as the guest, not the one specified in the Vagrantfile. 
+
+Set only one hosts group in inventory, 
+determining which type are by a paramenter in inventory and 
+conditionals on the external playbook "when role=..."
