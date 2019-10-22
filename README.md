@@ -117,4 +117,4 @@ We obtain them thank to `delegate_to` and `run_once` options.
 new branch, pull request:
 - tlsverify client
 - no password in vars
-- inventory key from command line
+- inventory key from command line - X
