@@ -1,7 +1,7 @@
 ---
 # defaults file for tls_api
 daemon_hostname: node1
-daemon_host_ip: 10.33.60.108
+daemon_host_ip: "{{ ansible_eth1.ipv4.address }}"
 CA_keys_pass: changeme
 CA_expiration_days: 365
 CA_details: "/C=GB/ST=London/L=London/O=ExampleCompany/OU=IT/CN=example.com/emailAddress=test@example.com"

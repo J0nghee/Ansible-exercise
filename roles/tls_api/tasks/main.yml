@@ -19,10 +19,10 @@
 - name: primi 3
   command: "{{ item }}"
   with_items:
-      - openssl genrsa -aes256 -passout pass:{{CA_keys_pass}} -out ca-key.pem 4096
-      - openssl req -passin pass:{{CA_keys_pass}} -new -x509 -days {{CA_expiration_days}} -key ca-key.pem -sha256 -out ca.pem -subj {{CA_details}}
-      - openssl genrsa -out server-key.pem 4096
-      - openssl req -subj "/CN={{daemon_hostname}}" -new -key server-key.pem -out server.csr
+     # - openssl genrsa -aes256 -passout pass:{{CA_keys_pass}} -out ca-key.pem 4096
+      - openssl req -nodes -new -x509 -days {{CA_expiration_days}} -keyout ca-key.pem -sha256 -out ca.pem -subj {{CA_details}}
+     # - openssl genrsa -out server-key.pem 4096
+      - openssl req  -nodes -subj "/CN={{daemon_hostname}}" -sha256 -new -keyout server-key.pem -out server.csr
   args:
     creates: key.pem
 
@@ -32,15 +32,15 @@
     dest: /home/vagrant/extfile.cnf
   
 - name: last command
-  command: openssl x509 -passin pass:{{CA_keys_pass}} -req -days {{CA_expiration_days}} -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+  command: openssl x509 -req -days {{CA_expiration_days}} -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
   args:
     creates: server-cert.pem
 
 - name: client keys
   command: "{{ item }}"
   with_items:
-    - openssl genrsa -out key.pem 4096
-    - openssl req -subj '/CN=client' -new -key key.pem -out client.csr
+   #- openssl genrsa -out key.pem 4096
+    - openssl req -nodes -subj '/CN=client' -new -keyout key.pem -out client.csr
   args:
     creates: client.csr
 
@@ -51,7 +51,7 @@
     
 
 - name: generate signed certificate
-  command: openssl x509 -passin pass:{{CA_keys_pass}} -req -days {{CA_expiration_days}} -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+  command: openssl x509 -req -days {{CA_expiration_days}} -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
   args:
     creates: cert.pem
 
@@ -91,17 +91,3 @@
     daemon_reload: yes
   
   
-
-  # - openssl req -subj "/CN={{daemon_host}}" -sha256 -new -key server-key.pem -out server.csr
-  # - echo subjectAltName = DNS:"{{daemon_host}}"",IP:"{{local_ip}}",IP:127.0.0.1 >> extfile.cnf
-  # - echo extendedKeyUsage = serverAuth >> extfile.cnf
-  # - openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
-  # - openssl genrsa -out key.pem 4096
-  # - openssl req -subj '/CN=client' -new -key key.pem -out client.csr
-  # - echo extendedKeyUsage = clientAuth > extfile-client.cnf
-  # - openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
-  # - rm -v client.csr server.csr extfile.cnf extfile-client.cnf
-  # - chmod -v 0400 ca-key.pem key.pem server-key.pem
-  # - chmod -v 0444 ca.pem server-cert.pem cert.pem
-  # - dockerd --tlsverify --tlscacert=ca.pem --tlscert=server-cert.pem --tlskey=server-key.pem -H=0.0.0.0:2376
-  # - 

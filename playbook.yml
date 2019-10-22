@@ -4,5 +4,4 @@
   become: true
   roles:
   - role: vagrant_env
-  - role: docker_api
   - role: tls_api
