@@ -100,9 +100,21 @@ After the VMs provisioning we will have certs inside a a folder on our machine w
 
     ansible-playbook -i inventory.ini playbook-swarm.yml
 
+It's better to specify the ssh private key by command line. By default vagrant put that file in `.vagrant/machines/node1/virtualbox/private_key` in the same folder of the Vagrantfile. 
+
+Alternatively, in the inventory.ini like this:
+`ansible_ssh_private_key_file='.vagrant/machines/node1/virtualbox/private_key'`
+
 The role `docker_swarm_init` just init a swarm with docker_swarm module. 
 
 The `docker_swarm_worker` needs from the master:
 	- the join-token worker 
 	- the ip address of the master
 We obtain them thank to `delegate_to` and `run_once` options. 
+
+
+#TODO
+new branch, pull request:
+- tlsverify client
+- no password in vars
+- inventory key from command line
