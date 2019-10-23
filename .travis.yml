@@ -4,6 +4,6 @@ install:
 script:
   - ansible-lint ./roles/*
   - cd ./roles/vagrant_env
-  -  molecule test
+ # -  molecule test
   -  molecule verify
 
