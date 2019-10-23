@@ -11,9 +11,8 @@
   delegate_to: node1
   run_once: true
 
-
 - debug:
-    var: worker_token, master_ip,
+    var: worker_token, master_ip
 
 - name: Add nodes
   docker_swarm:
