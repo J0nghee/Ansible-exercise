@@ -1,7 +1,8 @@
 language: python
 install:
-  - pip install ansible-lint
+  - pip install ansible-lint molecule
   - ansible-lint --version
 script:
-  - ansible-lint ./roles/*
+  - ansible-lint roles/*
+  - cd roles/vagrant_env && molecule test && molecule verify
 
