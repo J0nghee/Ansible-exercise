@@ -27,10 +27,10 @@ galaxy_info:
   # To view available platforms and versions (or releases), visit:
   # https://galaxy.ansible.com/api/v1/platforms/
   #
-   platforms:
-   - name: Centos
-     versions:
-     - 7
+  platforms:
+    - name: Centos
+      versions:
+      - 7
   #   - 25
   # - name: SomePlatform
   #   versions:

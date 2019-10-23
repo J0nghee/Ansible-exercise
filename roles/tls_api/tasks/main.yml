@@ -1,7 +1,7 @@
 ---
 # tasks file for tls_api
 - name: copy daemon.json
-  template: 
+  template:
     src: daemon.json
     dest: /etc/docker
 
@@ -15,14 +15,13 @@
     src: override.conf
     dest: /etc/systemd/system/docker.service.d/override.conf
 
-    
 - name: primi 3
   command: "{{ item }}"
   with_items:
      # - openssl genrsa -aes256 -passout pass:{{CA_keys_pass}} -out ca-key.pem 4096
-      - openssl req -nodes -new -x509 -days {{CA_expiration_days}} -keyout ca-key.pem -sha256 -out ca.pem -subj {{CA_details}}
+      - openssl req -nodes -new -x509 -days {{  CA_expiration_days  }} -keyout ca-key.pem -sha256 -out ca.pem -subj {{  CA_details  }}
      # - openssl genrsa -out server-key.pem 4096
-      - openssl req  -nodes -subj "/CN={{daemon_hostname}}" -sha256 -new -keyout server-key.pem -out server.csr
+      - openssl req  -nodes -subj "/CN={{  daemon_hostname  }}" -sha256 -new -keyout server-key.pem -out server.csr
   args:
     creates: key.pem
 
@@ -30,9 +29,11 @@
   template:
     src: extfile.cnf
     dest: /home/vagrant/extfile.cnf
-  
+
 - name: last command
-  command: openssl x509 -req -days {{CA_expiration_days}} -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+  command: >-
+    openssl x509 -req -days {{  CA_expiration_days  }} -in server.csr -CA ca.pem
+    -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
   args:
     creates: server-cert.pem
 
@@ -48,31 +49,31 @@
   copy:
     src: extfile-client.cnf
     dest: /home/vagrant/extfile-client.cnf
-    
 
 - name: generate signed certificate
-  command: openssl x509 -req -days {{CA_expiration_days}} -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+  command: >-
+    openssl x509 -req -days {{  CA_expiration_days  }} -sha256 -in client.csr -CA ca.pem
+    -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
   args:
     creates: cert.pem
 
 - name: chmod keys
   with_items:
-      - ca-key.pem 
-      - key.pem 
-      - server-key.pem  
+      - ca-key.pem
+      - key.pem
+      - server-key.pem
   file:
     path: "{{ item }}"
     mode: 0400
 
 - name: chmod server-cert
   with_items:
-    - ca.pem 
-    - server-cert.pem 
+    - ca.pem
+    - server-cert.pem
     - cert.pem
   file:
     path: "{{ item }}"
     mode: 0444
-
 
 - name: fetch client's files
   with_items:
@@ -89,5 +90,3 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
-  
-  

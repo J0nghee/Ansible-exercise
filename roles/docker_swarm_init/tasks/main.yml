@@ -1,8 +1,8 @@
 ---
-- debug: 
+- debug:
     msg: "{{ ansible_eth1.ipv4.address }}"
   when: role == 'master'
-    
+
 - name: Init a new docker swarm
   docker_swarm:
     state: present

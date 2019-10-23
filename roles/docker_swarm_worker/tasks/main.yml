@@ -6,7 +6,8 @@
   delegate_to: "{{ docker_master_host }}"
   run_once: true
 
-- set_fact:
+- name: register master ip address
+  set_fact:
     master_ip: "{{ ansible_eth1.ipv4.address }}"
   delegate_to: node1
   run_once: true
