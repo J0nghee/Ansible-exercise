@@ -118,3 +118,5 @@ new branch, pull request:
 - tlsverify client
 - no password in vars
 - inventory key from command line - X
+
+1557e0bd35f95c99adcc7ed42cae65f83f9524f3
