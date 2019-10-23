@@ -3,6 +3,6 @@ install:
   - pip install ansible-lint molecule python-vagrant
   - ansible-lint --version
 script:
-  - ansible-lint roles/*
-  - cd roles/vagrant_env && molecule test && molecule verify
+  - ansible-lint ./roles/*
+  - cd ./roles/vagrant_env && molecule test && molecule verify
 
