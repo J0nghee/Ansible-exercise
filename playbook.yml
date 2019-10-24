@@ -3,5 +3,6 @@
   hosts: all
   become: true
   roles:
+  - role: set_ssh_key
   - role: vagrant_env
   - role: tls_api

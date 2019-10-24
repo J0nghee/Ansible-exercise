@@ -1,0 +1,8 @@
+---
+# tasks file for roles/set_ssh_key
+
+- name: Set authorized key taken from file
+  authorized_key:
+    user: vagrant
+    state: present
+    key: "{{ lookup('file', 'files/here.pub') }}"
