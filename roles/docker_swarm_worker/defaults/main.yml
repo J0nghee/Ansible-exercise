@@ -1,2 +1,3 @@
 ---
 # defaults file for docker_swarm_worker
+docker_daemon_port: 2377

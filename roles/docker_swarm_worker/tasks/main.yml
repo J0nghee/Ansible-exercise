@@ -20,6 +20,6 @@
     state: join
     advertise_addr: "{{ ansible_eth1.ipv4.address }}"
     join_token: "{{ result.swarm_facts.JoinTokens.Worker }}"
-    remote_addrs: "{{ master_ip }}:2377"
+    remote_addrs: "{{ master_ip }}:{{  docker_daemon_port  }}"
   when: role == 'worker'
 
