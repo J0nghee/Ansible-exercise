@@ -7,9 +7,6 @@
     name: ['device-mapper-persistent-data', 'lvm2', 'yum-utils']
     state: present
 
-# - name: upgrade all packages
-#   yum: name=* state=latest
-
 - name: Add repository for pip
   yum_repository:
     name: epel
@@ -40,16 +37,11 @@
     state: present
   become: yes
 
-- name: Start Docker service
-  service:
-    name: docker
-    state: started
-    enabled: yes
-  become: yes
-
 - name: user vagrant to docker group
   user:
     name: vagrant
     groups: docker
     append: yes
   become: yes
+  notify:
+    - Start docker service

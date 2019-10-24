@@ -1,2 +1,9 @@
 ---
 # handlers file for tls_api
+
+- name: Restart docker service
+  systemd:
+    name: docker
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

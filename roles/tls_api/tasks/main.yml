@@ -83,10 +83,5 @@
   fetch:
     src: "{{ item }}"
     dest: .
-
-- name: Start Docker service
-  systemd:
-    name: docker
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
+  notify:
+    - Restart docker service

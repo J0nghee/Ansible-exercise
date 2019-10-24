@@ -1,2 +1,9 @@
 ---
 # handlers file for vagrant_env
+
+- name: Start docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
