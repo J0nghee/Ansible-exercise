@@ -1,1 +1,0 @@
-subjectAltName = DNS:{{daemon_hostname}},IP:{{daemon_host_ip}}

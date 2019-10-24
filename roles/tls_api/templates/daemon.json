@@ -1,8 +1,0 @@
-{
-    "hosts": ["tcp://0.0.0.0:2376", "unix:///var/run/docker.sock"],
-    "tls": true,
-    "tlscacert": "/home/vagrant/ca.pem",
-    "tlscert": "/home/vagrant/server-cert.pem",
-    "tlskey": "/home/vagrant/server-key.pem",
-    "tlsverify": true
-}
