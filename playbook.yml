@@ -1,6 +1,6 @@
 ---
 - name: expose docker api safely
-  hosts: localhost
+  hosts: all
   become: true
   roles:
   - role: vagrant_env

@@ -1,9 +1,11 @@
 language: python
 install:
-  - pip install ansible-lint molecule python-vagrant
+  - pip install ansible-lint molecule
 script:
   - ansible-lint ./roles/*
+  - ansible-playbook -i testIinventory playbook.yml --syntax-check
+  - ansible-playbook -i testInventory.ini playbook.yml --connection=local --sudo
   - cd ./roles/vagrant_env
- # -  molecule test
-  -  molecule verify
+  #-  molecule test
+  #-  molecule verify
 
